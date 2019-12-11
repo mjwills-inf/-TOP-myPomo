@@ -4,7 +4,7 @@ body{
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 #page-container {
-    background-image: linear-gradient(to bottom right, orange, green);
+    background-image: linear-gradient(to bottom right, orange, blue);
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -66,6 +66,7 @@ p {
     background-color: rgba(68, 68, 68, 0.4);
     margin: 20px 0px;
     border-radius: 5px;
+    width: 414.609px;
 }
 .buttons{
     display: flex;

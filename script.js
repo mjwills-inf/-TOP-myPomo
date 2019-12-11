@@ -1,11 +1,13 @@
-//Globals and events
+// Globals and events
 const allInputs = document.querySelectorAll('input');
+const valueChangeInoputs = document.querySelectorAll('.value-change')
 let sessionValue = document.getElementById('session-text');
 let breakValue = document.getElementById('break-text');
 let timerValue = document.getElementById('timer');
 
 let counter = sessionValue.innerText * 60;
 let state = "stop";
+let breakTime = "off"
 
 addEvents = () => {
   for (i = 0; i < allInputs.length; i++) {
@@ -13,68 +15,68 @@ addEvents = () => {
   }
 };
 
-// Button Function Map
+// Button Functions
 buttonFunction = (event) => {
   switch (event.target.name) {
     case "session-plus":
-      sessionValueUpdate(+1);
+      valueUpdate(+1, sessionValue);
       break;
     case "session-minus":
-      sessionValueUpdate(-1);
+      valueUpdate(-1, sessionValue);
       break;
     case "break-plus":
-      breakValueUpdate(+ 1);
+      valueUpdate(+ 1, breakValue);
       break;
     case "break-minus":
-      breakValueUpdate(-1);
+      valueUpdate(-1, breakValue);
       break;
     case "stop":
-      console.log("placeholder");
+      timerStop();
       break;
-
-
     case "play":
-      if (state == "live") {
-        timerPause();
-      } else {
-        timerStart();
-      }
+      state == "live" ? timerPause() : timerStart()
       break;
-
-
-    case "refresh":
-      // sessionValue.innerText = 25;
-      // breakValue.innerText = 5;
+    case "refresh":      
+      sessionValue.innerText = 25;
+      breakValue.innerText = 5;
+      timerStop();     
       break;
   }
+  buttonCheck();
 }
 
-// Break/Session change functions
-sessionValueUpdate = (plusMinus) => {
-  if (Number(sessionValue.innerText == 1) && plusMinus == -1) {
-    return;
+// Button Check Function
+buttonCheck = () => {
+  if (state == "live" || state == "paused") {
+    for (i = 0; i < valueChangeInoputs.length; i++) {
+      valueChangeInoputs[i].disabled = true;
+    }
   } else {
-    sessionValue.innerText = Number(sessionValue.innerText) + plusMinus;
-    counter = sessionValue.innerText * 60;
-    timerValue.innerText = sessionValue.innerText + ":00"
+    for (i = 0; i < valueChangeInoputs.length; i++) {
+      valueChangeInoputs[i].disabled = false;
+    }
   }
 }
 
-breakValueUpdate = (plusMinus) => {
-  if (Number(breakValue.innerText == 1) && plusMinus == -1) {
-    return;
-  } else {
-    breakValue.innerText = Number(breakValue.innerText) + plusMinus;
-  }
-}
-
-//Timer functions
+// Timer functions
 timerStart = () => {
   secondLess = () => {
+    if (counter == 0 && breakTime == "on") {
+      timerStop();
+      buttonCheck();
+      alert("Pomodoro Complete.");
+      clearInterval(setIntVar);
+      return;
+    } 
+    if (counter == 0) {
+      breakTime = "on";
+      counter = breakValue.innerText * 60;      
+      return;
+    }
     counter--;
-    display()
+    display()    
   }
-  setIntVar = setInterval(secondLess, 10);
+  setIntVar = setInterval(secondLess, 100);
   state = "live";
 }
 
@@ -83,19 +85,34 @@ timerPause = () => {
   state = "paused";
 }
 
-//Display Funtion
-display = () => {
-  let mins = Math.floor(counter / 60);
-  if (mins < 10) {
-    mins = "0" + mins;
-  }
-  let secs = counter % 60;
-  if (secs < 10) {
-    secs = "0" + secs;
-  }
-  timerValue.innerText = mins + ":" + secs;
+timerStop = () => {
+  clearInterval(setIntVar);
+  counter = sessionValue.innerText * 60;
+  display();
+  state = "stop";
 }
 
-//run 
+// Display Timer Funtion
+display = () => {
+  let mins = Math.floor(counter / 60);
+  mins < 10 ? mins = "0" + mins : mins = mins;
+  
+  let secs = counter % 60;
+  secs < 10 ? secs = "0" + secs : secs = secs;
+  timerValue.innerText = mins + ":" + secs;  
+}
+
+// Display Session/Break Functions
+valueUpdate = (plusMinus, whichValue) => {
+  if (Number(whichValue.innerText == 1) && plusMinus == -1) {
+    return;
+  } else {
+    whichValue.innerText = Number(whichValue.innerText) + plusMinus;
+    counter = sessionValue.innerText * 60;
+    display()
+  }
+}
+
+// run 
 addEvents();
 
