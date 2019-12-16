@@ -118,7 +118,6 @@ input:active {
     outline: none; 
     margin: auto; 
 }
-
 input[name='session-plus'] {
     background-image: url('../assets/plus.png');
     background-size: cover;
